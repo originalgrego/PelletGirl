@@ -1,3 +1,6 @@
+//Spawns the correct zombie based on which zombies are currently in play.  If any 
+//zombies remain in the cage an alarm is set to call this method after a short duration.
+
 if (!(livingZombies & RED_ZOMBIE)) {
     cage_spawn_zombie(obj_red_zombie);
     livingZombies |= RED_ZOMBIE;

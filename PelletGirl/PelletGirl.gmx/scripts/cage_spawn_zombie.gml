@@ -1,3 +1,5 @@
+//Spawns a zombie just above the cage
+
 var zombieType = argument0;
 
 var zombieSprite = object_get_sprite(zombieType);

@@ -4,14 +4,20 @@
     <Config>Configs\Default</Config>
   </Configs>
   <NewExtensions/>
-  <sounds name="sound"/>
+  <sounds name="sound">
+    <sound>sound\snd_pellet</sound>
+  </sounds>
   <sprites name="sprites">
     <sprite>sprites\spr_pelletgirl</sprite>
+    <sprite>sprites\spr_wall</sprite>
+    <sprite>sprites\spr_pellet</sprite>
   </sprites>
   <backgrounds name="background"/>
   <paths name="paths"/>
   <objects name="objects">
     <object>objects\obj_pellet_girl</object>
+    <object>objects\obj_wall</object>
+    <object>objects\obj_pellet</object>
   </objects>
   <rooms name="rooms">
     <room>rooms\room0</room>

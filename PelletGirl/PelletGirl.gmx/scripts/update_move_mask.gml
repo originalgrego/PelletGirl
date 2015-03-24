@@ -1,3 +1,5 @@
+//Updates the move mask for a zombie, does so by checking each direction for a wall and setting bits in our move mask.
+
 if (!place_meeting(x + 1, y, obj_wall_base)) {
   moveMask |= MOVE_R;
 } else {
