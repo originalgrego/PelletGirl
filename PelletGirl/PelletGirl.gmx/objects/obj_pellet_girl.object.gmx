@@ -25,12 +25,23 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>image_speed = 0.25;
+            <string>//Slow down the pellet girl animation
+image_speed = 0.25;
+
+//Start the map in normal mode
 global.superMode = false;
+
+//Store our spawn coordinates for respawns, allows spawn position to be map dependent
 spawnX = x;
 spawnY = y;
+
+//We are not currently dead
 dead = false;
+
+//Initialize the variable to false, no sound should play at spawn
 playPelletSoundNextChance = false;
+
+//Start the ear piercing siren
 audio_play_sound(snd_siren, 1, true);
 </string>
           </argument>
@@ -54,7 +65,8 @@ audio_play_sound(snd_siren, 1, true);
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>x = spawnX;
+            <string>//alarm[1] respawns Pellet Girl
+x = spawnX;
 y = spawnY;
 dead = false;
 audio_play_sound(snd_siren, 1, true);
@@ -80,7 +92,8 @@ audio_play_sound(snd_siren, 1, true);
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>global.superMode = false;
+            <string>//alarm[0] ends superMode
+global.superMode = false;
 </string>
           </argument>
         </arguments>
@@ -103,13 +116,17 @@ audio_play_sound(snd_siren, 1, true);
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>if (!(dead || global.gameOver)) {
+            <string>//When dead or gameOver nothing to do
+if (!(dead || global.gameOver)) {
 
+    //Only play sounds when we have eaten a pellet and there is not currently a pellet
+    //noise playing, avoids annoying bursts of pellet sounds
     if (playPelletSoundNextChance &amp;&amp; !audio_is_playing(snd_pellet)) {
         audio_play_sound(snd_pellet, 1, false);
         playPelletSoundNextChance = false;
     }
 
+    //Move in the direction the user is pressing if there is not a wall stopping them
     if (keyboard_check(vk_up) &amp;&amp; !place_meeting(x, y - 1, obj_wall_base)) {
         vspeed = -2;
         hspeed = 0;
@@ -124,6 +141,8 @@ audio_play_sound(snd_siren, 1, true);
         hspeed = 2;
     }
     
+    //If no pellets remain restart the room, gives the illusion of levels
+    //TODO: if more levels are implemented this should be a room_goto_next() call
     if (instance_number(obj_pellet) == 0) {
         room_restart();
     }
@@ -151,20 +170,24 @@ audio_play_sound(snd_siren, 1, true);
           <argument>
             <kind>1</kind>
             <string>if (!dead) {
+    //If superMode is activated kill the zombie and give the user a ton of points
     if (global.superMode) {
         if (destroy_other_if_close()) {
             score += 2000;
         }
-    } else if (is_close(other)) {
+    } else if (is_close(other)) { //Otherwise Pellet Girl dies
         playPelletSoundNextChance = false;
         dead = true;
+        //Hide Pellet Girl offscreen, i dunno why, lazy i guess
         x = -500;
         y = -500;
         speed = 0;
         image_angle = 0;
         lives --;
-        audio_play_sound(snd_death, 1, false);
+        //Stop the siren and play the death song
         audio_stop_sound(snd_siren);
+        audio_play_sound(snd_death, 1, false);
+        //If the user has no lives set the gameOver flag, otherwise set the respawn alarm 
         if (lives &lt; 0) {
             global.gameOver = true;
         } else {
@@ -194,7 +217,8 @@ audio_play_sound(snd_siren, 1, true);
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>if (destroy_other_if_close()) {
+            <string>//If we are close to the spray destroy it and enable super mode, give the user points
+if (destroy_other_if_close()) {
     global.superMode = true;
     alarm[0] = 150;
     score += 500;
@@ -222,7 +246,8 @@ audio_play_sound(snd_siren, 1, true);
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>if (destroy_other_if_close()) {
+            <string>//If we are close enough to the pellet, destroy it and give the user points
+if (destroy_other_if_close()) {
     score += 100;
     play_or_queue_pellet_sound();
 }
@@ -290,7 +315,8 @@ audio_play_sound(snd_siren, 1, true);
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>audio_stop_all();
+            <string>//Don't be annoying
+audio_stop_all();
 </string>
           </argument>
         </arguments>
@@ -313,7 +339,9 @@ audio_play_sound(snd_siren, 1, true);
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>lives = 1;
+            <string>//On a new game set the number of lives
+lives = 1;
+//Set the gameOver global to fals on game start
 global.gameOver = false;
 </string>
           </argument>
@@ -340,6 +368,7 @@ global.gameOver = false;
             <string>image_xscale = 1;
 image_speed = 0.25;
 
+//Set the drawing properties based on the direction the character is heading
 if (hspeed &gt; 0) {
     image_angle = 0;
 } else if (hspeed &lt; 0) {

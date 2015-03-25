@@ -25,16 +25,34 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>cage = instance_find(obj_cage, 0);
+            <string>//Keep a reference to the cage for reporting death
+cage = instance_find(obj_cage, 0);
+
+//Use a bit mask to store available moves
 moveMask = 15;
+
+//Create a constant for each direction, powers of 2 are used to target 
+//separate bits in the mask
+//TODO: these should be declared in the default configuration of the game macros 
 MOVE_R = 1;
 MOVE_L = 2;
 MOVE_U = 4;
 MOVE_D = 8;
+
+//When set do not change directions due to new opportunities in the move mask
 ignoreMoveMaskChange = false;
+
+//Whether this zombie is smart and follows pellet girl
 smart = false;
-originalSprite = sprite_index
+
+//The starting sprite of this zombie, used to restore the zombie's sprite 
+//after superMode
+originalSprite = sprite_index;
+
+//Whether this zombie is currently scared
 inScaredMode = false;
+
+//The type of the zombie, used to notify the cage of a dead zombie
 zombieType = GREEN_ZOMBIE;
 </string>
           </argument>
@@ -58,7 +76,8 @@ zombieType = GREEN_ZOMBIE;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>var zombieType = self.zombieType;
+            <string>//When the zombie has died remove the zombie from the livingZombies mask of the cage
+var zombieType = self.zombieType;
 with(cage) {
     livingZombies &amp;= ~zombieType;
     alarm[0] = 180;
@@ -108,7 +127,8 @@ with(cage) {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>if (!inScaredMode &amp;&amp; global.superMode) {
+            <string>//When changing to or from superMode immediately decide a new direction
+if (!inScaredMode &amp;&amp; global.superMode) {
     zombie_decide_direction();
     sprite_index = spr_scared_zombie;
     image_speed = 0.25;
@@ -124,6 +144,9 @@ var oldMask = moveMask;
 
 update_move_mask();
 
+//If we are not ignoring move mask changes, then decide a new direction if we have a new
+//movement opportunity, then ignore move mask changes for several frames.  Avoids
+//the zombie constantly changing directions due to new movement opportunities.
 if (!ignoreMoveMaskChange &amp;&amp; moveMask != oldMask) {
     zombie_decide_direction();
     alarm[1] = 3;
@@ -194,19 +217,20 @@ if (!ignoreMoveMaskChange &amp;&amp; moveMask != oldMask) {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>var eyeType = spr_zombie_eye_left;
-
-if (hspeed &gt; 0) {
-  eyeType = spr_zombie_eye_right;
-} else if (vspeed &lt; 0) {
-  eyeType = spr_zombie_eye_up;
-} else if (vspeed &gt; 0) {
-  eyeType = spr_zombie_eye_down;
-}
-
+            <string>//Draw the zombie, then draw eyes depending on the direction its heading 
 draw_self();
 
 if (!global.superMode) {
+    var eyeType = spr_zombie_eye_left;
+    
+    if (hspeed &gt; 0) {
+      eyeType = spr_zombie_eye_right;
+    } else if (vspeed &lt; 0) {
+      eyeType = spr_zombie_eye_up;
+    } else if (vspeed &gt; 0) {
+      eyeType = spr_zombie_eye_down;
+    }
+
     draw_sprite(eyeType, 0, x - 9 + 3, y - 9 + 4);
     draw_sprite(eyeType, 0, x - 9 + 9, y - 9 + 4);
 }

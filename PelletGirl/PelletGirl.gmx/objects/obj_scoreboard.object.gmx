@@ -25,7 +25,8 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>triggeredEndGameWait = false;
+            <string>//Flags to keep the user from immediately causing a restart due to pressing buttons
+triggeredEndGameWait = false;
 allowRestart = false;
 </string>
           </argument>
@@ -72,10 +73,13 @@ allowRestart = false;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>if (global.gameOver &amp;&amp; !triggeredEndGameWait) {
+            <string>//If the game is over trigger the end game wait once, user must wait one second to restart
+if (global.gameOver &amp;&amp; !triggeredEndGameWait) {
     alarm[0] = 10;
     triggeredEndGameWait = true;
-} else if (global.gameOver &amp;&amp; allowRestart &amp;&amp; keyboard_check_pressed(vk_anykey)) {
+} 
+//Once the allowRestart flag is set by alarm[0] any keyboard input will restart the game
+else if (global.gameOver &amp;&amp; allowRestart &amp;&amp; keyboard_check_pressed(vk_anykey)) {
     game_restart();
 }
 </string>
@@ -100,22 +104,26 @@ allowRestart = false;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>var colour = draw_get_colour();
+            <string>//Store the draw color to restore it
+var colour = draw_get_colour();
 
 draw_set_colour(c_white);
 
-
+//Draw the score left aligned
 draw_set_halign(fa_left);
 draw_text(x, y, "SCORE: " + string(score));
 
+//Draw the GAME OVER text centered on the screen
 if (global.gameOver) {
     draw_set_halign(fa_center);
     draw_text(room_width / 2, room_height / 2, "GAME OVER");
 }
 
 
+//Restore the draw color
 draw_set_colour(colour);
 
+//Draw a Pellet Girl for each life the user has in the upper right corner
 var spriteWidth = sprite_get_width(spr_pelletgirl);
 var spriteHeight = sprite_get_width(spr_pelletgirl);
 for (var i = 0; i &lt; lives; i ++) {

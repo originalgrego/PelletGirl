@@ -27,22 +27,29 @@
             <kind>1</kind>
             <string>cage_spawn_zombie(obj_red_zombie);
 
+//Store the sprites from the zombies
 pinkSprite = object_get_sprite(obj_zombie);
 redSprite = object_get_sprite(obj_red_zombie);
 orangeSprite = object_get_sprite(obj_orange_zombie);
 blueSprite = object_get_sprite(obj_blue_zombie);
 
+//Initiate the living zombies bit map
 livingZombies = RED_ZOMBIE;
 
+//Calculate the x positions of the zombiess in the cage
 cagedXs[0] = x + (sprite_width * 0.25) - 1;
 cagedXs[1] = x + (sprite_width * 0.5);
 cagedXs[2] = x + (sprite_width * 0.75) + 1;
 
+//Keep a reference to the base y value of the caged zombies
 cagedStartY = y + (sprite_height * 0.5);
+
+//Initialize the y positions of the zombiess in the cage
 cagedY[0] = cagedStartY;
 cagedY[1] = cagedStartY;
 cagedY[2] = cagedStartY;
 
+//Initialize the delta Y positions for moving the zombies in the cage
 cagedDeltaY[0] = -0.5;
 cagedDeltaY[1] = 0.5;
 cagedDeltaY[2] = -0.5;
@@ -93,7 +100,10 @@ alarm[0] = 120;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>cagedY[0] += cagedDeltaY[0];
+            <string>//Move the positions of the zombies in the cage, change the direction of the delta
+//if they have moved more than 2 pixels from the start y position
+
+cagedY[0] += cagedDeltaY[0];
 if (abs(cagedY[0] - cagedStartY) &gt; 2) {
     cagedDeltaY[0] = -cagedDeltaY[0];
 }
@@ -128,7 +138,9 @@ if (abs(cagedY[2] - cagedStartY) &gt; 2) {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>draw_self();
+            <string>//Draw the cage and then draw a zombie for each caged zombie up to 3
+
+draw_self();
 
 cagedNumber = 0;
 if (!(livingZombies &amp; RED_ZOMBIE)) {
@@ -146,6 +158,8 @@ if (!(livingZombies &amp; ORANGE_ZOMBIE)) {
     cagedNumber ++;
 }
 
+//Only need to check if there are already 3 zombies in the cage here, as we 
+//could have only drawn three zombies
 if (!(livingZombies &amp; GREEN_ZOMBIE) &amp;&amp; cagedNumber &lt; 3) {
     draw_sprite(pinkSprite, 0, cagedXs[cagedNumber], cagedY[cagedNumber]);
     cagedNumber ++;
